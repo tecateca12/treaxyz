@@ -138,7 +138,7 @@ body {
 }
 
 .team-member {
-    text-align: center;
+    text-align: left;
     padding: 2rem;
     background-color: white;
     border-radius: 8px;
@@ -146,6 +146,7 @@ body {
 }
 
 .team-member h3 {
+    text-align: left;
     color: var(--secondary-color);
     margin-bottom: 1rem;
     font-weight: 600;
@@ -265,6 +266,19 @@ body {
 }
 
 /* Contact Section */
+
+/* Estilo para enlaces de contacto (correo/teléfono) */
+.contact-link {
+    color: inherit; /* Hereda el color del texto padre (gris/negro) */
+    text-decoration: none; /* Quita el subrayado */
+    font-weight: inherit; /* Mantiene el peso de fuente normal */
+    transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+    color: var(--primary-color); /* Un pequeño cambio de color al pasar el mouse */
+}
+
 .contact-section {
     background-color: var(--light-bg-color);
 }
@@ -300,6 +314,29 @@ body {
     font-size: 1.1rem;
 }
 
+/* Estilos para el bloque de Redes Sociales (ÍCONOS OFICIALES con Font Awesome) */
+.social-links {
+    display: flex; /* Muestra los íconos en fila */
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1.5rem; /* Espacio entre los íconos */
+    margin-top: 1rem;
+}
+
+.social-links .social-icon {
+    display: block;
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.2s ease;
+    font-size: 2.2rem; /* CLAVE: Hace los íconos grandes */
+}
+
+.social-links .social-icon:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px); /* Efecto sutil al pasar el mouse */
+}
+
+/* Nota: Ya no necesitamos la clase .icon-emoji */
 .social-links a {
     display: inline-block;
     margin-top: 1rem;
@@ -393,5 +430,99 @@ body {
     }
     .contact-grid {
         grid-template-columns: 1fr; /* Una columna en móviles */
+    }
+}
+
+/* ==================================== */
+/* RESPONSIVE DESIGN          */
+/* ==================================== */
+
+/* Media Query para Tabletas y Móviles Grandes (hasta 992px) */
+@media (max-width: 992px) {
+    .container {
+        max-width: 90%; /* Hace que el contenido no esté pegado a los bordes */
+    }
+
+    .content-section {
+        padding: 5rem 0 3rem; /* Reduce el padding vertical en secciones */
+    }
+
+    /* Ajuste de Tipografía en General */
+    .content-section h2 {
+        font-size: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    .hero-content p {
+        font-size: 1.3rem;
+    }
+
+    /* Misión y Visión: Se apilan verticalmente */
+    .mission-vision-container {
+        flex-direction: column;
+    }
+
+    /* Contacto: Se apila verticalmente */
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Media Query para Móviles (hasta 600px) */
+@media (max-width: 600px) {
+
+    /* Header (Menú) */
+    .main-header {
+        flex-direction: column; /* Apila el logo y el menú */
+        padding: 1rem;
+        position: static; /* No fijo para no ocupar demasiado espacio */
+        box-shadow: none;
+    }
+
+    .main-nav .nav-list {
+        margin-top: 0.5rem;
+        flex-wrap: wrap; /* Permite que los links se envuelvan si no caben */
+        justify-content: center;
+    }
+    .main-nav .nav-list li {
+        margin: 0.5rem 0.5rem;
+    }
+
+    /* Hero */
+    .hero-section {
+        min-height: 50vh; /* Reduce la altura mínima para que la gente vea el contenido de abajo */
+        padding: 4rem 1rem;
+    }
+    .hero-content h1 {
+        font-size: 2rem; /* Reduce el tamaño del título principal */
+    }
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+    .hero-content {
+        padding: 0 10px;
+    }
+
+    /* Quiénes Somos (Grid de Equipo) */
+    .team-grid {
+        /* No necesita cambio, ya usa auto-fit que lo apila solo */
+        gap: 1.5rem;
+    }
+
+    /* Servicios (Grid de Tarjetas) */
+    .services-grid {
+        grid-template-columns: 1fr; /* Una sola columna en móvil */
+    }
+
+    /* Valores */
+    .valores-list li {
+        padding: 1rem;
+    }
+    .valores-list .icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
     }
 }
