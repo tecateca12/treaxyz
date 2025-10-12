@@ -513,7 +513,29 @@ body {
         height: 40px;
     }
 
+    .main-header.menu-open .logo-container {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
 
+    /* 2. MOSTRAR y ESTILIZAR el logo dentro del menú hamburguesa */
+    .logo-in-menu {
+        display: block;
+        padding: 0;
+        margin-bottom: 2rem !important;
+        border-bottom: 1px solid #eee; /* Añade la línea de separación que es necesaria */
+        padding-bottom: 1rem;
+    }
+
+    .logo-in-menu .logo-link {
+        /* Asegura que el logo-link y el logo-img dentro del menú se vean bien */
+        display: flex;
+        color: var(--primary-color); /* Asegura que el color base sea el primario */
+        justify-content: flex-start;
+        align-items: center;
+        text-decoration: none; /* CLAVE: Elimina el subrayado del enlace */
+    }
     /* Mostrar el botón Hamburguesa */
     .menu-toggle {
         display: block;
