@@ -53,7 +53,10 @@ body {
     align-items: center;
     text-decoration: none; /* Asegura que no tenga subrayado */
 }
-
+.header-container .logo-container {
+    z-index: 999;
+    /* ... resto de estilos del logo ... */
+}
 .logo-img {
     height: 40px; /* Tamaño de la imagen del logo */
     margin-right: 10px;
@@ -468,9 +471,11 @@ body {
 @media (max-width: 820px) {
 
     /* Header (Menú) - Punto 1 y 2 */
-    .main-header {
+    .main-header.menu-open .logo-container {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
-
     .header-container {
         flex-direction: row; /* Mantener logo y toggle en fila */
         justify-content: space-between;
