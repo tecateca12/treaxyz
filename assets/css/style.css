@@ -94,8 +94,16 @@ body {
 
 /* Hero Section */
 .hero-section {
-    background-color: var(--hero-bg);
-    color: white;
+    /* 1. Definición de la Imagen de Fondo */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('./assets/img/hero-treaxyz.png');
+
+    /* 2. Control del Fondo */
+    background-size: cover; /* Asegura que la imagen cubra toda la sección */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat;
+
+    /* 3. Estilos de la Caja */
+    color: white; /* Letras blancas para contrastar con el fondo oscuro */
     padding: 10rem 0;
     text-align: center;
     display: flex;
@@ -168,32 +176,56 @@ body {
     margin-bottom: 1rem;
 }
 
+/* ---  Estilos para la sección Valores --- */
+
 .valores {
     padding: 2rem;
     background-color: var(--light-bg-color);
     border-radius: 8px;
+    text-align: center;
 }
 
 .valores h3 {
     color: var(--secondary-color);
     font-size: 1.8rem;
-    margin-bottom: 1rem;
-    text-align: center;
+    margin-bottom: 2rem;
 }
 
-.valores ul {
+.valores-list { /* Nueva clase para la lista */
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     gap: 1.5rem;
+    padding: 0;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.valores li {
+.valores-list li {
+    display: flex;
+    align-items: center;
     background-color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: left;
+}
+
+.valores-list li strong {
+    font-weight: 700;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.valores-list .icon {
+    font-size: 1.8rem;
+    margin-right: 1.5rem;
+    line-height: 1;
+}
+
+.valores-list li p {
+    margin: 0;
+    flex-grow: 1;
 }
 
 /* Services Section */
