@@ -94,16 +94,17 @@ body {
 
 /* Hero Section */
 .hero-section {
-    /* 1. Definición de la Imagen de Fondo */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('./assets/img/hero-treaxyz.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('../img/hero-bg.png');
+    /* 1. Permite que la imagen se vea completa */
+    background-size: contain;
 
-    /* 2. Control del Fondo */
-    background-size: cover; /* Asegura que la imagen cubra toda la sección */
-    background-position: center; /* Centra la imagen */
+    /* 2. Repetir la imagen solo en el eje Y (si queda espacio) */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
 
-    /* 3. Estilos de la Caja */
-    color: white; /* Letras blancas para contrastar con el fondo oscuro */
+    color: white;
     padding: 10rem 0;
     text-align: center;
     display: flex;
