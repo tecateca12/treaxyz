@@ -469,7 +469,6 @@ body {
 
     /* Header (Menú) - Punto 1 y 2 */
     .main-header {
-        position: static; /* SOLUCIÓN AL PUNTO 1: Header no fijo en móvil */
     }
 
     .header-container {
@@ -484,7 +483,7 @@ body {
         inset: 0 0 0 30%; /* Ocupa el 70% de la pantalla */
         background: white;
         flex-direction: column;
-        padding: min(25vh, 10rem) 2rem;
+        padding: 1rem 1.5rem; /* Menos padding general */
         transform: translateX(100%); /* Oculto por defecto */
         transition: transform 350ms ease-out;
         box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
@@ -497,17 +496,18 @@ body {
     }
 
     .logo-in-menu {
-    /* Mostrar el logo solo dentro del menú desplegado en móvil */
-    display: block;
-    border-bottom: 1px solid #eee; /* Línea separadora */
-    padding-bottom: 1rem;
-    margin-bottom: 1rem !important; /* Importante para separarlo de los enlaces */
-}
+        display: flex; /* Asegura la alineación horizontal de img y texto */
+        justify-content: flex-start;
+        align-items: center;
+        /* Quitamos el padding-bottom y border-bottom para alinearlo con el borde superior del nav-list */
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 2rem !important; /* Aumenta la separación de los enlaces LI */
+    }
+    .logo-in-menu .logo-img {
+        height: 40px;
+    }
 
-/* Ocultar el logo del menú en la resolución de escritorio */
-.main-nav .logo-in-menu {
-    display: none;
-}
 
     /* Mostrar el botón Hamburguesa */
     .menu-toggle {
@@ -515,7 +515,7 @@ body {
         z-index: 9999;
         position: absolute; /* Para que quede encima del nav-list */
         right: 1rem;
-        top: 1.5rem;
+        top: 1rem;
         background: none;
         border: none;
         cursor: pointer;
