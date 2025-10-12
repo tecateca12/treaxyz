@@ -31,10 +31,6 @@ body {
 
 /* Header */
 .main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
     position: fixed;
     width: 100%;
     top: 0;
@@ -42,15 +38,19 @@ body {
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
 }
 
+/* Contenedor del Logo (NUEVO/RESTAURADO) */
 .logo-container {
     display: flex;
     align-items: center;
+    text-decoration: none; /* Asegura que no tenga subrayado */
 }
 
 .logo-img {
-    height: 40px;
+    height: 40px; /* Tamaño de la imagen del logo */
     margin-right: 10px;
 }
 
@@ -58,6 +58,17 @@ body {
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--primary-color);
+}
+
+/* El .header-container debe estar para alinear el logo y el menú/toggle */
+.header-container {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 20px;
 }
 
 .main-nav .nav-list {
@@ -407,31 +418,6 @@ body {
     padding: 2rem 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .main-header {
-        flex-direction: column;
-        padding: 1rem;
-    }
-    .main-nav .nav-list {
-        margin-top: 1rem;
-    }
-    .main-nav .nav-list li {
-        margin: 0 0.5rem;
-    }
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    .hero-content p {
-        font-size: 1.2rem;
-    }
-    .content-section {
-        padding: 6rem 0 3rem;
-    }
-    .contact-grid {
-        grid-template-columns: 1fr; /* Una columna en móviles */
-    }
-}
 
 /* ==================================== */
 /* RESPONSIVE DESIGN          */
@@ -472,57 +458,94 @@ body {
 
 
 /* Media Query para Móviles (hasta 600px) */
-@media (max-width: 600px) {
 
-    /* Header (Menú) */
+/* Media Query para Móviles (hasta 600px) */
+@media (max-width: 820px) {
+
+    /* Header (Menú) - Punto 1 y 2 */
     .main-header {
-        flex-direction: column; /* Apila el logo y el menú */
-        padding: 1rem;
-        position: static; /* No fijo para no ocupar demasiado espacio */
-        box-shadow: none;
+        position: static; /* SOLUCIÓN AL PUNTO 1: Header no fijo en móvil */
     }
 
-    .main-nav .nav-list {
-        margin-top: 0.5rem;
-        flex-wrap: wrap; /* Permite que los links se envuelvan si no caben */
-        justify-content: center;
-    }
-    .main-nav .nav-list li {
-        margin: 0.5rem 0.5rem;
+    .header-container {
+        flex-direction: row; /* Mantener logo y toggle en fila */
+        justify-content: space-between;
+        align-items: center;
     }
 
-    /* Hero */
+    /* Ocultar el menú por defecto y animarlo */
+    .nav-list {
+        position: fixed;
+        inset: 0 0 0 30%; /* Ocupa el 70% de la pantalla */
+        background: white;
+        flex-direction: column;
+        padding: min(25vh, 10rem) 2rem;
+        transform: translateX(100%); /* Oculto por defecto */
+        transition: transform 350ms ease-out;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+    }
+    .nav-list[data-visible="true"] {
+        transform: translateX(0%); /* Mostrar cuando está activo */
+    }
+    .nav-list li {
+        margin: 1rem 0;
+    }
+
+    /* Mostrar el botón Hamburguesa */
+    .menu-toggle {
+        display: block;
+        z-index: 9999;
+        position: absolute; /* Para que quede encima del nav-list */
+        right: 1rem;
+        top: 1.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    .menu-toggle::before {
+        content: '☰'; /* Ícono de hamburguesa */
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--secondary-color);
+    }
+    .menu-toggle[aria-expanded="true"]::before {
+        content: '✕'; /* Ícono de cierre */
+    }
+
+    /* Quiénes Somos (Grid de Equipo) y Servicios */
+    .services-grid, .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Valores (Alineación de Íconos) - Punto 3 */
+    .valores-list li {
+        flex-direction: column; /* Apila el contenido del valor */
+        text-align: center;
+    }
+    .valores-list .icon {
+        order: 3; /* El ícono va primero */
+        font-size: 2rem;
+        margin: 0.5rem 0;
+    }
+    .valores-list li strong {
+        order: 0; /* El título va primero */
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+    .valores-list li p {
+        order: 2; /* El texto va al final */
+    }
+
+    /* Resto de ajustes de tipografía y padding para móvil */
     .hero-section {
-        min-height: 50vh; /* Reduce la altura mínima para que la gente vea el contenido de abajo */
+        min-height: 50vh;
         padding: 4rem 1rem;
     }
     .hero-content h1 {
-        font-size: 2rem; /* Reduce el tamaño del título principal */
+        font-size: 2rem;
     }
     .hero-content p {
         font-size: 1.1rem;
-    }
-    .hero-content {
-        padding: 0 10px;
-    }
-
-    /* Quiénes Somos (Grid de Equipo) */
-    .team-grid {
-        /* No necesita cambio, ya usa auto-fit que lo apila solo */
-        gap: 1.5rem;
-    }
-
-    /* Servicios (Grid de Tarjetas) */
-    .services-grid {
-        grid-template-columns: 1fr; /* Una sola columna en móvil */
-    }
-
-    /* Valores */
-    .valores-list li {
-        padding: 1rem;
-    }
-    .valores-list .icon {
-        font-size: 1.5rem;
-        margin-right: 1rem;
     }
 }
