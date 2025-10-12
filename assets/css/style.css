@@ -28,7 +28,10 @@ body {
     margin: 0 auto;
     padding: 0 20px;
 }
-
+/* Logo interno de la hamburguesa, oculto en escritorio */
+.logo-in-menu {
+    display: none;
+}
 /* Header */
 .main-header {
     position: fixed;
@@ -40,6 +43,8 @@ body {
     transition: background-color 0.3s ease;
     display: flex;
     justify-content: center;
+    /* Altura mínima para asegurar que el contenido no se solape por debajo */
+    min-height: 60px;
 }
 
 /* Contenedor del Logo (NUEVO/RESTAURADO) */
@@ -490,6 +495,19 @@ body {
     .nav-list li {
         margin: 1rem 0;
     }
+
+    .logo-in-menu {
+    /* Mostrar el logo solo dentro del menú desplegado en móvil */
+    display: block;
+    border-bottom: 1px solid #eee; /* Línea separadora */
+    padding-bottom: 1rem;
+    margin-bottom: 1rem !important; /* Importante para separarlo de los enlaces */
+}
+
+/* Ocultar el logo del menú en la resolución de escritorio */
+.main-nav .logo-in-menu {
+    display: none;
+}
 
     /* Mostrar el botón Hamburguesa */
     .menu-toggle {
