@@ -271,12 +271,13 @@ body {
     padding: 2rem;
     border-radius: 8px;
     
-    /* MODIFICACIONES CLAVE PARA CENTRADO TOTAL */
-    display: flex;             /* Habilita Flexbox */
-    flex-direction: column;    /* Apila los elementos verticalmente (uno debajo del otro) */
-    align-items: center;       /* CLAVE: Centra los elementos (íconos/títulos) horizontalmente */
-    text-align: center;        /* Mantiene el centrado para el texto dentro de los elementos */
-    /* FIN MODIFICACIONES CLAVE */
+    /* Centrado de Bloques (para íconos o contenedores) */
+    display: flex;             
+    flex-direction: column;    
+    align-items: center;       /* Centra los elementos hijos horizontalmente */
+    
+    /* Centrado de Texto */
+    text-align: center;        /* Centra el texto dentro de los elementos */
     
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: transform 0.3s ease;
