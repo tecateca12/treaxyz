@@ -270,7 +270,14 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 8px;
-    text-align: center;
+    
+    /* MODIFICACIONES CLAVE PARA CENTRADO TOTAL */
+    display: flex;             /* Habilita Flexbox */
+    flex-direction: column;    /* Apila los elementos verticalmente (uno debajo del otro) */
+    align-items: center;       /* CLAVE: Centra los elementos (íconos/títulos) horizontalmente */
+    text-align: center;        /* Mantiene el centrado para el texto dentro de los elementos */
+    /* FIN MODIFICACIONES CLAVE */
+    
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: transform 0.3s ease;
 }
