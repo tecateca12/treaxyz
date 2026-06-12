@@ -37,7 +37,7 @@ Cada corrida aparece como **Auditoría N de M** (orden cronológico: #1 = primer
 | 2 | Efectivo tope 3× (override) | Efectivo | `REJECTED` | `INFO_PENDING` | `TOPE_EFECTIVO`; nota override |
 | 3 | Digital MP aprobado | Mercado Pago | `APPROVED` | `APPROVED` | Comprobante; sin fotos |
 | 4 | Digital duración vs monto | MP/MODO | `REJECTED` | `INFO_PENDING` | `MONTO_VS_DURACION`; override |
-| 5 | Re-auditoría (2 corridas) | Efectivo o digital | 1.º `REJECTED` → 2.º `APPROVED` | `APPROVED` | **Historial con 2+ audits** |
+| 5 | Tope de rechazos del auditor | Efectivo | 3× `REJECTED` (`TOPE_EFECTIVO`) | `CANCELED` | **Historial con 3 audits**; nota `AUDIT_REJECTION_FLOOD` |
 
 ---
 
@@ -194,49 +194,58 @@ Con tarifas Abasto (máx. **$10.000**), el tope es **$30.000**. Monto **$35.000*
 
 ---
 
-## Escenario 5 — Re-auditoría (historial con 2 corridas)
+## Escenario 5 — Tope de rechazos del auditor (3 corridas fallidas)
 
-**Objetivo:** Validar que el admin muestra **todas** las auditorías en orden cuando hay re-intento tras rechazo.
+**Objetivo:** Mostrar el historial completo de auditorías cuando el usuario repite el mismo error (como en el escenario 2) hasta superar el máximo de rechazos y el reclamo se cancela automáticamente.
 
 ### Regla en código
 
-Tras `REJECTED`, `PARSE_ERROR` o `UNEXPECTED_STATUS`, el claim queda en `INFO_PENDING`. Si el usuario aporta lo pedido, el bot puede volver a `AUDIT` ([`_AUDIT_OUTCOMES_ALLOWING_RERUN`](../libs/flows/flows.py)).
+[`_maybe_cancel_after_rejection_flood`](../libs/flows/flows.py): si el conteo de auditorías con `outcome = REJECTED` supera `MAX_AUDIT_REJECTIONS_BEFORE_CANCEL`, el claim pasa a `CANCELED` y se agrega una nota en `conversation_history`:
 
-### Fase 1 — Primera auditoría (rechazo esperado)
+`AUDIT_REJECTION_FLOOD:{timestamp}:{n} rechazos acumulados (máx {N})`
+
+(análoga a `ADMIN_REJECT` cuando cancela el admin).
+
+### Precondición para esta demo
+
+| Variable | Valor sugerido |
+|----------|----------------|
+| `MAX_AUDIT_REJECTIONS_BEFORE_CANCEL` | **2** → cancela en el **3.º** rechazo (3 auditorías visibles). Con el default **3** cancela en el **4.º**. |
+
+### Punto de partida — mismo reclamo que escenario 2
 
 | Campo | Valor sugerido |
 |-------|----------------|
-| Ubicación | Vaga: *"un shopping en CABA"* (sin nombre de máquina ni lugar concreto) |
-| Monto | $8.000 |
-| Medio | Efectivo o Mercado Pago (según prefieras mostrar fotos o comprobante) |
-| Evidencia | Foto o comprobante según medio |
+| Ubicación | Abasto 1 - Subsuelo |
+| Monto | **$35.000** (supera tope 3× → override `TOPE_EFECTIVO` en cada corrida) |
+| Medio de pago | Efectivo |
+| Relato | "Pagué $35000 en efectivo en el sillón del subsuelo del Abasto y no funcionó." |
+| Evidencia | 1 foto del sillón en cada ciclo si el bot la vuelve a pedir |
 
-**Resultado fase 1:** `REJECTED` → `INFO_PENDING`; feedback pidiendo ubicación exacta / máquina.
+### Flujo — repetir hasta el cierre automático
 
-### Fase 2 — Corrección y re-auditoría
+1. Completar el reclamo como en el **escenario 2** → primera auditoría **REJECTED** (`TOPE_EFECTIVO`) → `INFO_PENDING`.
+2. Cuando el bot pida corregir el monto, **insistir con $35.000** (o un monto igualmente por encima del tope) y volver a confirmar / reenviar evidencia si hace falta → segunda auditoría **REJECTED**.
+3. Repetir una vez más → tercera auditoría **REJECTED** → con `MAX_AUDIT_REJECTIONS_BEFORE_CANCEL=2` el backend cancela el reclamo y envía mail de contacto por WhatsApp.
 
-Responder con datos concretos, por ejemplo:
-
-> "Fue en Abasto Shopping, sillón del subsuelo, Abasto 1."
-
-Si el bot pide confirmación o más datos, completarlos. Tras nueva evidencia (si hace falta reconfirmar), segunda corrida del auditor.
-
-**Resultado fase 2:** `APPROVED` → `APPROVED`.
+En cada vuelta el override backend puede mostrar `llm_decision = APPROVED` con `outcome = REJECTED` (nota de override en admin).
 
 ### Resultado esperado en admin
 
 | Dónde | Qué esperar |
 |-------|-------------|
-| `claim_audits` | **2 filas** (o más si hubo intentos extra) |
-| Orden en UI | **Auditoría 1 de 2** = REJECTED (primera); **Auditoría 2 de 2** = APPROVED (última) |
-| `claims.status` | `APPROVED` tras la segunda corrida |
+| `claim_audits` | **3 filas** (con `MAX=2`), todas `outcome = REJECTED`, motivo **`TOPE_EFECTIVO`** |
+| Orden en UI | **Auditoría 1 de 3**, **2 de 3**, **3 de 3** — todas REJECTED |
+| `claims.status` | `CANCELED` tras la última corrida |
+| `claims.conversation_history` | Línea `AUDIT_REJECTION_FLOOD:...` con cantidad de rechazos |
+| WhatsApp | Mensaje de cierre con mail `AUDIT_REJECTION_CONTACT_EMAIL` |
 
 ### Checklist demo
 
-- [ ] Dos bloques numerados en sección Auditorías
-- [ ] Primera corrida REJECTED con feedback visible
-- [ ] Segunda corrida APPROVED
-- [ ] Orden cronológico claro (1 → 2)
+- [ ] Tres bloques numerados en sección Auditorías, todos REJECTED
+- [ ] Motivo `TOPE_EFECTIVO` en cada corrida (override visible si aplica)
+- [ ] Claim en `CANCELED`, no en `INFO_PENDING`
+- [ ] Nota `AUDIT_REJECTION_FLOOD` en `conversation_history` (consulta DB si hace falta)
 
 ---
 
@@ -251,4 +260,4 @@ Si el bot pide confirmación o más datos, completarlos. Tras nueva evidencia (s
 1. **Preparar números de WhatsApp distintos** (o limpiar claims entre escenarios) para no mezclar conversaciones.
 2. **Anotar el `claim_id`** que muestra el bot al confirmar; es la URL del admin.
 3. Para escenarios 2 y 4, **mencionar en voz alta** que el LLM pudo haber aprobado pero el backend aplicó la regla — la UI lo refleja.
-4. El escenario 5 es el **más importante** para demostrar el historial completo de auditorías.
+4. El escenario 5 es el **más importante** para demostrar el historial completo de auditorías y el cierre automático por tope de rechazos.
