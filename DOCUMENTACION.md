@@ -197,7 +197,8 @@ Catálogo: **todas** las filas de `machines` + índice de cobertura ([`build_aud
 
 ### Resultados y persistencia
 
-- Tabla `claim_audits`: `outcome`, `reason`, `feedback_to_user`, `llm_decision`, etc.
+- Tabla `claim_audits`: `outcome`, `reason`, `feedback_to_user`, `llm_decision`, etc. — **una fila por cada corrida** del auditor (incluye re-auditorías).
+- El panel admin en `/admin/reports/{id}` muestra **todas** las filas ordenadas cronológicamente (Auditoría 1…N), no solo la última. Ver [`DEMO_ESCENARIOS.md`](DEMO_ESCENARIOS.md) para casos de demo.
 - `REJECTED` → claim vuelve a `INFO_PENDING` con texto para el usuario.
 - Más de `MAX_AUDIT_REJECTIONS_BEFORE_CANCEL` rechazos (default 3, cancela en el **4.º**) → `CANCELED` + mail de contacto.
 
@@ -249,7 +250,9 @@ El chat **no** pasa a `COMPLETED` solo; tampoco permite abrir otro reclamo mient
 |------|-------------|
 | `/admin/login` | Contraseña → token Bearer en `sessionStorage` |
 | `/admin/reports` | Listado con filtros por estado (etiquetas en español) |
-| `/admin/reports/{id}` | Detalle: reclamo, cliente, reembolso, máquina, comprobante, fotos, mensajes, auditorías |
+| `/admin/reports/{id}` | Detalle: reclamo, cliente, reembolso, máquina, comprobante, fotos, **historial de auditorías** (todas las corridas, orden cronológico), mensajes |
+
+La sección **Auditorías** lista cada corrida como *Auditoría N de M* con `outcome`, decisión LLM, motivo y feedback. Si el LLM aprobó pero el backend aplicó un override (tope efectivo, monto vs duración digital), la UI lo indica. Escenarios de demo: [`DEMO_ESCENARIOS.md`](DEMO_ESCENARIOS.md).
 
 **Revisión manual** (sección oculta si el estado es `CANCELED` o `COMPLETED`):
 
@@ -267,7 +270,7 @@ API: `POST /reports/update_status` con Bearer `ADMIN_API_TOKEN`. Validación en 
 | GET | `/reports/payment_pending` | Bearer |
 | GET | `/reports/all` | Bearer |
 | GET | `/reports/claims?status=` | Bearer |
-| GET | `/reports/claims/{id}` | Bearer |
+| GET | `/reports/claims/{id}` | Bearer — incluye array `audits` con historial completo |
 | POST | `/reports/update_status` | Bearer |
 
 Swagger: `/docs`
@@ -314,8 +317,8 @@ pytest -m integration
 
 | Carpeta | Contenido |
 |---------|-----------|
-| `tests/unit/` | Catálogo, merge WhatsApp, evidencia, estados, overrides de auditoría |
-| `tests/integration/` | `update_claim_status`, API de reportes con Flask test client |
+| `tests/unit/` | Catálogo, merge WhatsApp, evidencia, estados, overrides de auditoría, mapper de audits en reportes |
+| `tests/integration/` | `update_claim_status`, API de reportes (incl. historial `audits[]`) con Flask test client |
 
 ---
 
@@ -332,9 +335,10 @@ libs/flows/flows.py          # Máquina de estados principal
 libs/llm/prompts/            # Prompts y reglas del LLM
 libs/machines/catalog.py     # Tarifas, catálogo, overrides digital
 app_api/services/whatsapp.py # Webhook, debounce, envío
-app_api/services/reports.py  # Mapeo admin
+app_api/services/reports.py  # Mapeo admin (audits[], detalle)
 utils/postgres_manager.py    # Persistencia y update admin
 templates/admin/             # UI HTML
 static/admin/                # JS admin
+docs/DEMO_ESCENARIOS.md      # Escenarios de demo (WhatsApp + admin)
 tests/                       # pytest unit + integration
 ```
